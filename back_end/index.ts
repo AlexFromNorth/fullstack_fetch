@@ -1,28 +1,29 @@
 import { Folder } from "./types/types";
-
 import express from "express";
 import fs from "fs";
 import jsonDb from "./db/store.json";
 const app = express();
 const rootFolder: Folder = jsonDb;
 
+app.use(express.json());
+
 //get/list
+app.get("/folder/", (req, res) => {
+  res.send(rootFolder);
+});
+
+//get/folder
 app.get("/folder/:folderId", (req, res) => {
-  // res.send(text[0]);
   res.json(
     findFolderById(rootFolder, +req.params.folderId) ||
       `Folder with Id ${req.params.folderId} not found`
   );
 });
 
-app.use(express.json());
-
 //create/post
 app.post("/create/:parentId", (req, res) => {
-  // res.send("Got a POST request" + req.params.testId);
-
   if (!req.body) {
-    res.json("ERROR: folder object is required");
+    return res.json("ERROR: folder object is required");
   }
 
   const folder: unknown = req.body;
@@ -34,29 +35,52 @@ app.post("/create/:parentId", (req, res) => {
     const parentFolder = findFolderById(rootFolder, +req.params.parentId);
 
     if (!parentFolder) {
-      res.json(`Folder with Id ${req.params.parentId} not found`);
+      return res.json(`Folder with Id ${req.params.parentId} not found`);
     } else {
       parentFolder.child.push(folder);
       fs.writeFile("./db/store.json", JSON.stringify(rootFolder), (err) => {
         if (err) {
-          res.json("ERROR: 500 server error");
           console.log(err);
+          return res.json("ERROR: 500 server error");
         } else {
-          res.json(folder);
+          return res.json(folder);
         }
       });
     }
   } else {
-    res.json("ERROR: wrong folder structure. Body must be { title: string }");
+    return res.json("ERROR: wrong folder structure. Body must be { title: string }");
   }
-
-  res.send(
-    "Got a POST request" +
-      JSON.stringify(findFolderById(rootFolder, +req.params.parentId))
-  );
 });
 
-app.listen(3000); //port
+//post update
+app.post("/update/:id", (req, res) => {
+  if (!req.body) {
+    return res.json("ERROR: folder object is required");
+  }
+
+  const folder: unknown = req.body;
+
+  if (isFolder(folder)) {
+    const currentFolder = findFolderById(rootFolder, +req.params.id);
+
+    if (!currentFolder) {
+      return res.json(`Folder with Id ${req.params.id} not found`);
+    } else {
+      currentFolder.title = req.body.title;
+
+      fs.writeFile("./db/store.json", JSON.stringify(rootFolder), (err) => {
+        if (err) {
+          console.log(err);
+          return res.json("ERROR: 500 server error");
+        } else {
+          return res.json(currentFolder);
+        }
+      });
+    }
+  } else {
+    return res.json("ERROR: wrong folder structure. Body must be { title: string }");
+  }
+});
 
 function isFolder(folder: unknown): folder is Folder {
   return (
@@ -85,6 +109,10 @@ function findFolderById(folder: Folder, id: number): Folder | null {
   return null;
 }
 
+// вынести в папку утилс
 function generateFolderId() {
   return Math.floor(Math.random() * 100000);
 }
+
+// settings
+app.listen(3000); //port
