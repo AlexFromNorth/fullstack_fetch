@@ -1,116 +1,207 @@
 {
-  "swagger": "2.0",
+  "openapi": "3.0.0",
   "info": {
     "title": "Folder API",
-    "description": "Description",
     "version": "1.0.0"
   },
-  "host": "localhost:3000",
-  "basePath": "/",
-  "schemes": ["http"],
   "paths": {
-    "/folder/list": {
+    "/api/folders": {
       "get": {
-        "description": "",
+        "summary": "Get all folders",
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Folder"
+                }
+              }
+            }
           }
         }
       }
     },
-    "/folder/{folderId}": {
+    "/api/folders/{folderId}": {
       "get": {
-        "description": "",
+        "summary": "Get a folder by ID",
         "parameters": [
           {
             "name": "folderId",
             "in": "path",
             "required": true,
-            "type": "string"
+            "schema": {
+              "type": "integer"
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Folder"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Folder not found"
           }
         }
       }
     },
-    "/folder/create/{parentId}": {
+    "/api/folders/{parentId}/child": {
       "post": {
-        "description": "",
+        "summary": "Create a new child folder",
         "parameters": [
           {
             "name": "parentId",
             "in": "path",
             "required": true,
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
             "schema": {
-              "type": "object",
-              "properties": {
-                "title": {
-                  "example": "some string"
-                }
-              }
+              "type": "integer"
             }
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewFolder"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Folder"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request body"
+          },
+          "404": {
+            "description": "Parent folder not found"
           }
         }
       }
     },
-    "/folder/update/{id}": {
+    "/api/folders/{id}": {
       "put": {
-        "description": "",
+        "summary": "Update a folder",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
             "schema": {
-              "type": "object",
-              "properties": {
-                "title": {
-                  "example": "any"
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateFolder"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Folder"
                 }
               }
+            }
+          },
+          "400": {
+            "description": "Invalid request body"
+          },
+          "404": {
+            "description": "Folder not found"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a folder",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Folder"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Cannot delete root folder"
+          },
+          "404": {
+            "description": "Folder not found"
           }
         }
       }
-    },
-    "/folder/delete/{id}": {
-      "delete": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
+    }
+  },
+  "components": {
+    "schemas": {
+      "Folder": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "title": {
+            "type": "string"
+          },
+          "child": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Folder"
+            }
+          }
+        }
+      },
+      "NewFolder": {
+        "type": "object",
+        "properties": {
+          "title": {
             "type": "string"
           }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
+        }
+      },
+      "UpdateFolder": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
           }
         }
       }
