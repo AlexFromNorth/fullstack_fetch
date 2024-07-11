@@ -2,6 +2,7 @@
 nodemon - нужен для обновления и перезапуска 
 
 npm run swagger - генерация документации к апи
+
 http://localhost:3000/api-docs/  - свагер
 
 
@@ -16,4 +17,5 @@ axios
 
 
 ----
+
 delete git directories
