@@ -17,5 +17,5 @@ axios
 
 
 ----
+
 delete git directories
-http://localhost:3000/api-docs/  - свагер
