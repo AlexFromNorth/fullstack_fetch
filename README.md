@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 Back
 
 запуск бэк cd back_end:  nodemon ./index.ts localhost:3000
@@ -12,3 +13,6 @@ Front
 http://localhost:4000/
 cd front_end - заходим в директорию
 yarn dev - запускаем проект
+=======
+# destructPictureCanvas
+>>>>>>> main
