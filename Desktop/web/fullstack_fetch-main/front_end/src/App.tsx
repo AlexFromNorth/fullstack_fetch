@@ -8,7 +8,20 @@ function App() {
   const [count, setCount] = useState(0);
 
   useEffect(() => {
-    // editFolder('update Title', 4)
+    const fetchData = async () => {
+      try {
+        const response = await fetch("http://localhost:3000/folder/list");
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        console.log(data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
   }, []);
 
   return (
